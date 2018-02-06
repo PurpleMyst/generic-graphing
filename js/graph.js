@@ -20,9 +20,10 @@
       output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start);
 
   class Graph {
-    constructor(constants, formula) {
+    constructor(constants, formula, displayer) {
       this.constants = constants;
       this.formula = formula;
+      this.displayer = displayer;
 
       this._createCanvas();
       this._createInputContainer();
@@ -186,8 +187,47 @@
       this._context.putImageData(imageData, 0, 0);
     }
 
+    _stringifyFormula() {
+      const actualConstants = this.constants.map(name => +this._inputs[name].value);
+      const parts = this.displayer(...actualConstants);
+      if (parts instanceof String) return parts;
+
+      let stringFormula = "y = ";
+      let first = true;
+      parts.forEach(part => {
+        let [coefficient, letter] = part;
+
+        if (coefficient === 0) {
+          return;
+        } else if (!first) {
+          if (coefficient > 0) {
+            stringFormula += " + ";
+          } else {
+            stringFormula += " - ";
+          }
+        }
+
+        if (!first) coefficient = Math.abs(coefficient);
+        stringFormula += coefficient;
+        stringFormula += letter;
+
+        first = false;
+      });
+
+      if (stringFormula.length === "y = ".length) {
+        return "y = 0";
+      }
+
+      return stringFormula;
+    }
+
     _drawFormula() {
-      /* TODO: How can we do this generically? */
+      if(!this.displayer) return;
+      const stringFormula = this._stringifyFormula();
+
+      this._context.font = "bold 16px serif";
+      this._context.fillStyle = "#00F";
+      this._context.fillText(stringFormula, 5, 16);
     }
 
     draw() {
