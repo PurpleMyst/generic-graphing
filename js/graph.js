@@ -187,45 +187,59 @@
       this._context.putImageData(imageData, 0, 0);
     }
 
-    _stringifyFormula() {
-      const actualConstants = this.constants.map(name => +this._inputs[name].value);
-      const parts = this.displayer(...actualConstants);
-      if (parts instanceof String) return parts;
+    _stringifyPolynomial(polynomial, depth) {
+      if (typeof polynomial === "string") return polynomial;
 
-      let stringFormula = "y = ";
-      let first = true;
-      parts.forEach(part => {
-        let [coefficient, letter] = part;
+      let stringPolynomial = "";
+      let index = 0;
+
+      polynomial.forEach(part => {
+        /* TODO: Can we call this something better than factor? */
+        let [coefficient, factor] = part;
 
         if (coefficient === 0) {
           return;
-        } else if (!first) {
+        } else if (index !== 0) {
           if (coefficient > 0) {
-            stringFormula += " + ";
+            stringPolynomial += " + ";
           } else {
-            stringFormula += " - ";
+            stringPolynomial += " - ";
           }
         }
 
-        if (!first) coefficient = Math.abs(coefficient);
-        stringFormula += coefficient;
-        stringFormula += letter;
+        const stringFactor = this._stringifyPolynomial(factor, depth + 1);
 
-        first = false;
+        if (index !== 0) coefficient = Math.abs(coefficient);
+        if (coefficient !== 1 || stringFactor.length === 0) stringPolynomial += coefficient;
+        stringPolynomial += stringFactor;
+        if (index < polynomial.length - 2) stringPolynomial += '^' + (polynomial.length - index - 1);
+
+        index += 1;
       });
 
-      if (stringFormula.length === "y = ".length) {
-        return "y = 0";
+      if (stringPolynomial === "") {
+        stringPolynomial = "0";
       }
 
-      return stringFormula;
+      if (depth !== 0 && polynomial.filter(t => t[0] != 0).length > 1) {
+        stringPolynomial = '(' + stringPolynomial + ')';
+      }
+
+      return stringPolynomial;
+    }
+
+    _stringifyFormula() {
+      const actualConstants = this.constants.map(name => +this._inputs[name].value);
+      const displayed = this.displayer(...actualConstants);
+
+      return "y = " + this._stringifyPolynomial(displayed, 0);
     }
 
     _drawFormula() {
       if(!this.displayer) return;
       const stringFormula = this._stringifyFormula();
 
-      this._context.font = "bold 16px serif";
+      this._context.font = "bold 14px serif";
       this._context.fillStyle = "#00F";
       this._context.fillText(stringFormula, 5, 16);
     }
