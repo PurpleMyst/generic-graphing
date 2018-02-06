@@ -27,7 +27,7 @@
 
       polynomial.forEach(part => {
         /* TODO: Can we call this something better than factor? */
-        let [coefficient, factor] = part;
+        let [coefficient, factor, power] = part;
 
         if (coefficient === 0) {
           index += 1;
@@ -43,9 +43,16 @@
         const stringFactor = stringifyPolynomial(factor, depth + 1);
 
         if (index !== 0) coefficient = Math.abs(coefficient);
-        if (coefficient !== 1 || stringFactor.length === 0) stringPolynomial += coefficient;
+
+        if (coefficient !== 1 || stringFactor.length === 0) {
+          stringPolynomial += coefficient;
+        }
+
         stringPolynomial += stringFactor;
-        if (index < polynomial.length - 2) stringPolynomial += '^' + (polynomial.length - index - 1);
+
+        if (power != 1) {
+          stringPolynomial += '^' + power;
+        }
 
         index += 1;
       });
