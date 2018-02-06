@@ -19,60 +19,11 @@
   const mapRange = (input, input_start, input_end, output_start, output_end) =>
       output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start);
 
-  const stringifyPolynomial = (polynomial, depth) => {
-      if (typeof polynomial === "string") return polynomial;
-
-      let stringPolynomial = "";
-      let index = 0;
-
-      polynomial.forEach(part => {
-        /* TODO: Can we call this something better than factor? */
-        let [coefficient, factor, power] = part;
-
-        if (coefficient === 0) {
-          index += 1;
-          return;
-        } else if (index !== 0) {
-          if (coefficient > 0) {
-            stringPolynomial += " + ";
-          } else {
-            stringPolynomial += " - ";
-          }
-        }
-
-        const stringFactor = stringifyPolynomial(factor, depth + 1);
-
-        if (index !== 0) coefficient = Math.abs(coefficient);
-
-        if (coefficient !== 1 || stringFactor.length === 0) {
-          stringPolynomial += coefficient;
-        }
-
-        stringPolynomial += stringFactor;
-
-        if (power != 1) {
-          stringPolynomial += '^' + power;
-        }
-
-        index += 1;
-      });
-
-      if (stringPolynomial === "") {
-        stringPolynomial = "0";
-      }
-
-      if (depth !== 0 && polynomial.filter(t => t[0] != 0).length > 1) {
-        stringPolynomial = '(' + stringPolynomial + ')';
-      }
-
-      return stringPolynomial;
-    }
-
   class Graph {
-    constructor(constants, formula, displayer) {
+    constructor(constants, formula, stringifyer) {
       this.constants = constants;
       this.formula = formula;
-      this.displayer = displayer;
+      this.stringifyer = stringifyer;
 
       this._createCanvas();
       this._createInputContainer();
@@ -238,13 +189,11 @@
 
     _stringifyFormula() {
       const actualConstants = this.constants.map(name => +this._inputs[name].value);
-      const displayed = this.displayer(...actualConstants);
-
-      return "y = " + stringifyPolynomial(displayed, 0);
+      return "y = " + this.stringifyer(...actualConstants);
     }
 
     _drawFormula() {
-      if(!this.displayer) return;
+      if(!this.stringifyer) return;
       const stringFormula = this._stringifyFormula();
 
       this._context.font = "bold 14px serif";
@@ -262,4 +211,40 @@
   }
 
   window.Graph = Graph;
+
+  // FIXME: this is probably not idiomatic javascript
+  const GraphUtils = {};
+
+  GraphUtils.numberTimesText = function(number, text) {
+    if (number === 0) return "0";
+    if (number === 1) return text;
+    if (number === -1) return "-" + text;
+    return number.toString() + text;
+  }
+
+  GraphUtils.addNicely = function(stringedNumbers) {
+    stringedNumbers = stringedNumbers.filter(s => s !== "0");
+    if (stringedNumbers.length === 0) return "0";
+
+    for (var i = 1; i < stringedNumbers.length; i++) {
+      if (stringedNumbers[i][0] === "+") {
+        stringedNumbers[i] = " + " + stringedNumbers[i].slice(1);
+      } else if (stringedNumbers[i][0] === "-") {
+        stringedNumbers[i] = " - " + stringedNumbers[i].slice(1);
+      } else {
+        stringedNumbers[i] = " + " + stringedNumbers[i];
+      }
+    }
+    return stringedNumbers.join("");
+  }
+
+  GraphUtils.parenthesize = function(stringed) {
+    if ((stringed.indexOf("+") === -1) && (stringed.indexOf("-") === -1)) return stringed;
+    return "(" + stringed + ")";
+  }
+
+  GraphUtils.SQUARED = "\xb2";
+
+  window.GraphUtils = GraphUtils;
+
 }());
