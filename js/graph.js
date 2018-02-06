@@ -19,6 +19,48 @@
   const mapRange = (input, input_start, input_end, output_start, output_end) =>
       output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start);
 
+  const stringifyPolynomial = (polynomial, depth) => {
+      if (typeof polynomial === "string") return polynomial;
+
+      let stringPolynomial = "";
+      let index = 0;
+
+      polynomial.forEach(part => {
+        /* TODO: Can we call this something better than factor? */
+        let [coefficient, factor] = part;
+
+        if (coefficient === 0) {
+          index += 1;
+          return;
+        } else if (index !== 0) {
+          if (coefficient > 0) {
+            stringPolynomial += " + ";
+          } else {
+            stringPolynomial += " - ";
+          }
+        }
+
+        const stringFactor = stringifyPolynomial(factor, depth + 1);
+
+        if (index !== 0) coefficient = Math.abs(coefficient);
+        if (coefficient !== 1 || stringFactor.length === 0) stringPolynomial += coefficient;
+        stringPolynomial += stringFactor;
+        if (index < polynomial.length - 2) stringPolynomial += '^' + (polynomial.length - index - 1);
+
+        index += 1;
+      });
+
+      if (stringPolynomial === "") {
+        stringPolynomial = "0";
+      }
+
+      if (depth !== 0 && polynomial.filter(t => t[0] != 0).length > 1) {
+        stringPolynomial = '(' + stringPolynomial + ')';
+      }
+
+      return stringPolynomial;
+    }
+
   class Graph {
     constructor(constants, formula, displayer) {
       this.constants = constants;
@@ -187,52 +229,11 @@
       this._context.putImageData(imageData, 0, 0);
     }
 
-    _stringifyPolynomial(polynomial, depth) {
-      if (typeof polynomial === "string") return polynomial;
-
-      let stringPolynomial = "";
-      let index = 0;
-
-      polynomial.forEach(part => {
-        /* TODO: Can we call this something better than factor? */
-        let [coefficient, factor] = part;
-
-        if (coefficient === 0) {
-          return;
-        } else if (index !== 0) {
-          if (coefficient > 0) {
-            stringPolynomial += " + ";
-          } else {
-            stringPolynomial += " - ";
-          }
-        }
-
-        const stringFactor = this._stringifyPolynomial(factor, depth + 1);
-
-        if (index !== 0) coefficient = Math.abs(coefficient);
-        if (coefficient !== 1 || stringFactor.length === 0) stringPolynomial += coefficient;
-        stringPolynomial += stringFactor;
-        if (index < polynomial.length - 2) stringPolynomial += '^' + (polynomial.length - index - 1);
-
-        index += 1;
-      });
-
-      if (stringPolynomial === "") {
-        stringPolynomial = "0";
-      }
-
-      if (depth !== 0 && polynomial.filter(t => t[0] != 0).length > 1) {
-        stringPolynomial = '(' + stringPolynomial + ')';
-      }
-
-      return stringPolynomial;
-    }
-
     _stringifyFormula() {
       const actualConstants = this.constants.map(name => +this._inputs[name].value);
       const displayed = this.displayer(...actualConstants);
 
-      return "y = " + this._stringifyPolynomial(displayed, 0);
+      return "y = " + stringifyPolynomial(displayed, 0);
     }
 
     _drawFormula() {
