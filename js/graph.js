@@ -212,39 +212,36 @@
 
   window.Graph = Graph;
 
-  // FIXME: this is probably not idiomatic javascript
-  const GraphUtils = {};
+  window.GraphUtils = {
+    SQUARED: "\xb2",
 
-  GraphUtils.numberTimesText = function(number, text) {
-    if (number === 0) return "0";
-    if (number === 1) return text;
-    if (number === -1) return "-" + text;
-    return number.toString() + text;
-  }
+    numberTimesText(number, text) {
+      if (number === 0) return "0";
+      if (number === 1) return text;
+      if (number === -1) return "-" + text;
+      return number.toString() + text;
+    },
 
-  GraphUtils.addNicely = function(stringedNumbers) {
-    stringedNumbers = stringedNumbers.filter(s => s !== "0");
-    if (stringedNumbers.length === 0) return "0";
+    addNicely(stringedNumbers) {
+      stringedNumbers = stringedNumbers.filter(s => s !== "0");
+      if (stringedNumbers.length === 0) return "0";
 
-    for (var i = 1; i < stringedNumbers.length; i++) {
-      if (stringedNumbers[i][0] === "+") {
-        stringedNumbers[i] = " + " + stringedNumbers[i].slice(1);
-      } else if (stringedNumbers[i][0] === "-") {
-        stringedNumbers[i] = " - " + stringedNumbers[i].slice(1);
-      } else {
-        stringedNumbers[i] = " + " + stringedNumbers[i];
+      for (var i = 1; i < stringedNumbers.length; i++) {
+        if (stringedNumbers[i][0] === "+") {
+          stringedNumbers[i] = " + " + stringedNumbers[i].slice(1);
+        } else if (stringedNumbers[i][0] === "-") {
+          stringedNumbers[i] = " - " + stringedNumbers[i].slice(1);
+        } else {
+          stringedNumbers[i] = " + " + stringedNumbers[i];
+        }
       }
+      return stringedNumbers.join("");
+    },
+
+    parenthesize(stringed) {
+      if ((stringed.indexOf("+") === -1) && (stringed.indexOf("-") === -1)) return stringed;
+      return "(" + stringed + ")";
     }
-    return stringedNumbers.join("");
-  }
-
-  GraphUtils.parenthesize = function(stringed) {
-    if ((stringed.indexOf("+") === -1) && (stringed.indexOf("-") === -1)) return stringed;
-    return "(" + stringed + ")";
-  }
-
-  GraphUtils.SQUARED = "\xb2";
-
-  window.GraphUtils = GraphUtils;
+  };
 
 }());
