@@ -9,7 +9,7 @@
   const ARROW_SIZE = 5;
   const TICK_SIZE = 3;
 
-  const STEP = 0.01;
+  const STEP = 0.1;
 
   const INPUT_DOMAIN_START  = -5;
   const INPUT_DOMAIN_END    = 5;
@@ -50,7 +50,7 @@
         $input.id = name;
         $input.type = "number";
         $input.value = 0;
-        $input.addEventListener("input", () => this.draw());
+        $input.addEventListener("input", () => window.requestAnimationFrame(() => this.draw()));
 
         const $label = document.createElement("label");
         $label.htmlFor = name;
