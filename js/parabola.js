@@ -2,7 +2,7 @@
 
 const getParabolaEquationString = (a, vertexX, vertexY) => GraphUtils.addNicely([
   GraphUtils.numberTimesText(a, GraphUtils.parenthesize(
-    GraphUtils.addNicely(["x", (-vertexX).toString()])) + GraphUtils.SQUARED),
+    GraphUtils.addNicely(["x", (-vertexX).toString()])) + GraphUtils.superscript("2")),
   vertexY.toString()
 ]);
 
