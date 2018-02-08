@@ -1,6 +1,6 @@
 /* jshint esnext: true, browser: true */
 
-const getParabolaEquationString = (a, vertexX, vertexY) => GraphUtils.addNicely([
+const getParabolaEquationString = (a, vertexX, vertexY) => "y = " + GraphUtils.addNicely([
   GraphUtils.numberTimesText(a, GraphUtils.parenthesize(
     GraphUtils.addNicely(["x", (-vertexX).toString()])) + GraphUtils.superscript("2")),
   vertexY.toString()

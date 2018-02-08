@@ -190,7 +190,7 @@
 
     _stringifyFormula() {
       const actualConstants = this.constantNames.map(name => +this._inputs[name].value);
-      return "y = " + this.stringifyer(...actualConstants);
+      return this.stringifyer(...actualConstants);
     }
 
     _drawFormula() {
