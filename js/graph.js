@@ -3,38 +3,38 @@
 (function() {
   "use strict";
 
-  const CANVAS_WIDTH  = 300;
-  const CANVAS_HEIGHT = 300;
-
   const ARROW_SIZE = 5;
-  const TICK_SIZE = 3;
+  const TICK_SIZE  = 3;
 
   const STEP = 0.1;
-
-  const INPUT_DOMAIN_START  = -5;
-  const INPUT_DOMAIN_END    = 5;
-  const OUTPUT_DOMAIN_START = -5;
-  const OUTPUT_DOMAIN_END   = 5;
 
   const mapRange = (input, input_start, input_end, output_start, output_end) =>
       output_start + ((output_end - output_start) / (input_end - input_start)) * (input - input_start);
 
   class Graph {
-    constructor(constants, formula, stringifyer) {
+    constructor(constants, formula, stringifyer,
+                inputDomainStart, inputDomainEnd,
+                outputDomainStart, outputDomainEnd,
+                width, height) {
+
       this.constants = constants;   // [name, defaultValue] pairs
       this.constantNames = constants.map(nameValuePair => nameValuePair[0]);
       this.formula = formula;
       this.stringifyer = stringifyer;
+      this._inputDomainStart = inputDomainStart;
+      this._inputDomainEnd = inputDomainEnd;
+      this._outputDomainStart = outputDomainStart;
+      this._outputDomainEnd = outputDomainEnd;
 
-      this._createCanvas();
+      this._createCanvas(width, height);
       this._createInputContainer();
       this._createInputs();
     }
 
-    _createCanvas() {
+    _createCanvas(width, height) {
       this._canvas = document.createElement("canvas");
-      this._canvas.width = CANVAS_WIDTH;
-      this._canvas.height = CANVAS_HEIGHT;
+      this._canvas.width = width;
+      this._canvas.height = height;
       this._context = this._canvas.getContext("2d");
       document.body.append(this._canvas);
     }
@@ -72,20 +72,20 @@
       this._context.beginPath();
       this._context.strokeStyle = "#1113";
 
-      for (let mathY = OUTPUT_DOMAIN_START; mathY <= OUTPUT_DOMAIN_END; ++mathY) {
+      for (let mathY = this._outputDomainStart; mathY <= this._outputDomainEnd; ++mathY) {
         const screenY = mapRange(-mathY,
-                                 OUTPUT_DOMAIN_START, OUTPUT_DOMAIN_END,
+                                 this._outputDomainStart, this._outputDomainEnd,
                                  0, this._canvas.height - 1);
         const nextScreenY = mapRange(-(mathY + 1),
-                                     OUTPUT_DOMAIN_START, OUTPUT_DOMAIN_END,
+                                     this._outputDomainStart, this._outputDomainEnd,
                                      0, this._canvas.height - 1);
 
-        for (let mathX = INPUT_DOMAIN_START; mathX <= INPUT_DOMAIN_END; ++mathX) {
+        for (let mathX = this._inputDomainStart; mathX <= this._inputDomainEnd; ++mathX) {
           const screenX = mapRange(mathX,
-                                   INPUT_DOMAIN_START, INPUT_DOMAIN_END,
+                                   this._inputDomainStart, this._inputDomainEnd,
                                    0, this._canvas.width - 1);
           const nextScreenX = mapRange(mathX + 1,
-                                       INPUT_DOMAIN_START, INPUT_DOMAIN_END,
+                                       this._inputDomainStart, this._inputDomainEnd,
                                        0, this._canvas.width - 1);
 
           /* left to right */
@@ -108,10 +108,10 @@
       this._context.fillStyle = "#000";
 
       /* draw x numbers */
-      for (let mathX = INPUT_DOMAIN_START; mathX <= INPUT_DOMAIN_END; ++mathX) {
+      for (let mathX = this._inputDomainStart; mathX <= this._inputDomainEnd; ++mathX) {
         if (mathX === 0) continue;
         const screenX = mapRange(mathX,
-                                 INPUT_DOMAIN_START, INPUT_DOMAIN_END,
+                                 this._inputDomainStart, this._inputDomainEnd,
                                  0, this._canvas.width - 1);
         this._context.moveTo(screenX, this._canvas.height / 2 - TICK_SIZE);
         this._context.lineTo(screenX, this._canvas.height / 2 + TICK_SIZE);
@@ -119,10 +119,10 @@
       }
 
       /* draw y numbers */
-      for (let mathY = OUTPUT_DOMAIN_START; mathY <= OUTPUT_DOMAIN_END; ++mathY) {
+      for (let mathY = this._outputDomainStart; mathY <= this._outputDomainEnd; ++mathY) {
         if (mathY === 0) continue;
         const screenY = mapRange(-mathY,
-                                 OUTPUT_DOMAIN_START, OUTPUT_DOMAIN_END,
+                                 this._outputDomainStart, this._outputDomainEnd,
                                  0, this._canvas.height - 1);
 
         this._context.moveTo(this._canvas.width / 2 - TICK_SIZE, screenY);
@@ -171,12 +171,12 @@
       for (let screenX = 0; screenX < this._canvas.width; screenX += STEP) {
         const mathX = mapRange(screenX,
                                0, this._canvas.width,
-                               INPUT_DOMAIN_START, INPUT_DOMAIN_END);
+                               this._inputDomainStart, this._inputDomainEnd);
 
         const mathY = this.formula(...actualConstants, mathX);
 
         const screenY = mapRange(-mathY,
-                                 OUTPUT_DOMAIN_START, OUTPUT_DOMAIN_END,
+                                 this._outputDomainStart, this._outputDomainEnd,
                                  0, this._canvas.height);
 
         const i = (Math.floor(screenY) * this._canvas.width + Math.floor(screenX)) * 4;

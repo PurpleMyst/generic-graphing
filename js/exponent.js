@@ -13,6 +13,9 @@ function getExponentEquationString(base) {
 document.addEventListener("DOMContentLoaded", () => {
   const graph = new Graph([["base", 2]],
                           (base, x) => Math.pow(base, x),
-                          getExponentEquationString);
+                          getExponentEquationString,
+                          -5, 5,
+                          -5, 5,
+                          300, 300);
   graph.draw();
 });

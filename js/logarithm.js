@@ -11,6 +11,9 @@ function getExponentEquationString(base) {
 document.addEventListener("DOMContentLoaded", () => {
   const graph = new Graph([["base", 2]],
                           (base, x) => (validBase(base) ? Math.log(x)/Math.log(base) : NaN),
-                          getExponentEquationString);
+                          getExponentEquationString,
+                          -5, 5,
+                          -5, 5,
+                          300, 300);
   graph.draw();
 });

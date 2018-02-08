@@ -7,6 +7,9 @@ const getLineEquationString = (slope, constant) => "y = " + GraphUtils.addNicely
 document.addEventListener("DOMContentLoaded", () => {
   const graph = new Graph([["slope", 1], ["constant term", 0]],
                           (slope, constant, x) => slope * x + constant,
-                          getLineEquationString);
+                          getLineEquationString,
+                          -5, 5,
+                          -5, 5,
+                          300, 300);
   graph.draw();
 });
