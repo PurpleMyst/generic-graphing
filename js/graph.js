@@ -241,11 +241,11 @@
 
   window.GraphUtils = {
     superscript(string) {
-      return Array.from(string).map(char_ => SUPERSCRIPTS[char_] || char_);
+      return Array.from(string).map(char_ => SUPERSCRIPTS[char_] || char_).join("");
     },
 
     subscript(string) {
-      return Array.from(string).map(char_ => SUBSCRIPTS[char_] || char_);
+      return Array.from(string).map(char_ => SUBSCRIPTS[char_] || char_).join("");
     },
 
     numberTimesText(number, text) {
