@@ -195,11 +195,14 @@
 
     _drawFormula() {
       if(!this.stringifyer) return;
-      const stringFormula = this._stringifyFormula();
-
       this._context.font = "bold 14px serif";
       this._context.fillStyle = "#00F";
-      this._context.fillText(stringFormula, 5, 16);
+
+      // the canvas widget doesn't like newlines
+      const formulaLines = this._stringifyFormula().split("\n");
+      for (var i = 0; i < formulaLines.length; i++) {
+        this._context.fillText(formulaLines[i], 5, 18*(i + 1));
+      }
     }
 
     draw() {
