@@ -7,7 +7,7 @@ const getParabolaEquationString = (a, b, c) => GraphUtils.addNicely([
 ]);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const graph = new Graph(["a", "b", "c"], 
+  const graph = new Graph(["the a constant", "vertex x", "vertex y"],
                           (a, b, c, x) => a * Math.pow(x - b, 2) + c,
                           getParabolaEquationString);
   graph.draw();
