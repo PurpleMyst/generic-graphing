@@ -245,7 +245,7 @@
     },
 
     subscript(string) {
-      return Array.from(string).map(char_ => SUBSCRIPTS[char_] || char);
+      return Array.from(string).map(char_ => SUBSCRIPTS[char_] || char_);
     },
 
     numberTimesText(number, text) {
