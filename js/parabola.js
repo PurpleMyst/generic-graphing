@@ -1,14 +1,14 @@
 /* jshint esnext: true, browser: true */
 
-const getParabolaEquationString = (a, b, c) => GraphUtils.addNicely([
+const getParabolaEquationString = (a, vertexX, vertexY) => GraphUtils.addNicely([
   GraphUtils.numberTimesText(a, GraphUtils.parenthesize(
-    GraphUtils.addNicely(["x", (-b).toString()])) + GraphUtils.SQUARED),
-  c.toString()
+    GraphUtils.addNicely(["x", (-vertexX).toString()])) + GraphUtils.SQUARED),
+  vertexY.toString()
 ]);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const graph = new Graph(["a", "b", "c"], 
-                          (a, b, c, x) => a * Math.pow(x - b, 2) + c,
+  const graph = new Graph([["the a constant", 1], ["vertex x", 0], ["vertex y", 0]],
+                          (a, vertexX, vertexY, x) => a * Math.pow(x - vertexX, 2) + vertexY,
                           getParabolaEquationString);
   graph.draw();
 });

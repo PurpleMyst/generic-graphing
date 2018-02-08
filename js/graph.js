@@ -21,7 +21,8 @@
 
   class Graph {
     constructor(constants, formula, stringifyer) {
-      this.constants = constants;
+      this.constants = constants;   // [name, defaultValue] pairs
+      this.constantNames = constants.map(nameValuePair => nameValuePair[0]);
       this.formula = formula;
       this.stringifyer = stringifyer;
 
@@ -44,12 +45,12 @@
       document.body.append(this._$inputContainer);
     }
 
-    _createInput(name) {
+    _createInput(name, defaultValue) {
         const $input = document.createElement("input");
         $input.name = name;
         $input.id = name;
         $input.type = "number";
-        $input.value = 0;
+        $input.value = defaultValue;
         $input.addEventListener("input", () => window.requestAnimationFrame(() => this.draw()));
 
         const $label = document.createElement("label");
@@ -64,7 +65,7 @@
 
     _createInputs() {
       this._inputs = {};
-      this.constants.forEach(name => this._createInput(name));
+      this.constants.forEach(nameValuePair => this._createInput(...nameValuePair));
     }
 
     _drawGrid() {
@@ -165,7 +166,7 @@
       const imageData = this._context.getImageData(0, 0, this._canvas.width, this._canvas.height);
       const pixels = imageData.data;
 
-      const actualConstants = this.constants.map(name => +this._inputs[name].value);
+      const actualConstants = this.constantNames.map(name => +this._inputs[name].value);
 
       for (let screenX = 0; screenX < this._canvas.width; screenX += STEP) {
         const mathX = mapRange(screenX,
@@ -188,7 +189,7 @@
     }
 
     _stringifyFormula() {
-      const actualConstants = this.constants.map(name => +this._inputs[name].value);
+      const actualConstants = this.constantNames.map(name => +this._inputs[name].value);
       return "y = " + this.stringifyer(...actualConstants);
     }
 
