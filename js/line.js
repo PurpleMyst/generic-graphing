@@ -1,6 +1,6 @@
 /* jshint esnext: true, browser: true */
 
-const getLineEquationString = (slope, constant) => GraphUtils.addNicely([
+const getLineEquationString = (slope, constant) => "y = " + GraphUtils.addNicely([
   GraphUtils.numberTimesText(slope, "x"), constant.toString()
 ]);
 

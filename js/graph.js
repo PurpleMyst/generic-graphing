@@ -190,16 +190,19 @@
 
     _stringifyFormula() {
       const actualConstants = this.constantNames.map(name => +this._inputs[name].value);
-      return "y = " + this.stringifyer(...actualConstants);
+      return this.stringifyer(...actualConstants);
     }
 
     _drawFormula() {
       if(!this.stringifyer) return;
-      const stringFormula = this._stringifyFormula();
-
       this._context.font = "bold 14px serif";
       this._context.fillStyle = "#00F";
-      this._context.fillText(stringFormula, 5, 16);
+
+      // the canvas widget doesn't like newlines
+      const formulaLines = this._stringifyFormula().split("\n");
+      for (var i = 0; i < formulaLines.length; i++) {
+        this._context.fillText(formulaLines[i], 5, 18*(i + 1));
+      }
     }
 
     draw() {
@@ -213,8 +216,41 @@
 
   window.Graph = Graph;
 
+  const SUPERSCRIPTS = {
+    "0": "\u2070",
+    "1": "\u00b9",  // this and the next 3 don't follow the pattern in unicode
+    "2": "\u00b2",
+    "3": "\u00b3",
+    "4": "\u2074",
+    "5": "\u2075",
+    "6": "\u2076",
+    "7": "\u2077",
+    "8": "\u2078",
+    "9": "\u2079",
+    "x": "\u02E3",
+    "y": "\u02B8"
+  };
+  const SUBSCRIPTS = {
+    "0": "\u2080",
+    "1": "\u2081",
+    "2": "\u2082",
+    "3": "\u2083",
+    "4": "\u2084",
+    "5": "\u2085",
+    "6": "\u2086",
+    "7": "\u2087",
+    "8": "\u2088",
+    "9": "\u2089"
+  };
+
   window.GraphUtils = {
-    SQUARED: "\xb2",
+    superscript(string) {
+      return Array.from(string).map(char_ => SUPERSCRIPTS[char_] || char_).join("");
+    },
+
+    subscript(string) {
+      return Array.from(string).map(char_ => SUBSCRIPTS[char_] || char_).join("");
+    },
 
     numberTimesText(number, text) {
       if (number === 0) return "0";
