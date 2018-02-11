@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const graph = new Graph([["base", 2]],
                           (base, x) => (validBase(base) ? Math.log(x)/Math.log(base) : NaN),
                           getExponentEquationString,
-                          -5, 5,
+                          -2, 8,  // TODO: figure out how to make the equation go out of the way
                           -5, 5,
                           300, 300);
   graph.draw();

@@ -31,6 +31,19 @@
       this._createInputs();
     }
 
+    xScreenToMath(screenX) {
+      return mapRange(screenX, 0, this._canvas.width - 1, this._inputDomainStart, this._inputDomainEnd);
+    }
+    xMathToScreen(mathX) {
+      return mapRange(mathX, this._inputDomainStart, this._inputDomainEnd, 0, this._canvas.width - 1);
+    }
+    yScreenToMath(screenY) {
+      return mapRange(this._canvas.height - screenY, 0, this._canvas.height - 1, this._outputDomainStart, this._outputDomainEnd);
+    }
+    yMathToScreen(mathY) {
+      return this._canvas.height - mapRange(mathY, this._outputDomainStart, this._outputDomainEnd, 0, this._canvas.height - 1);
+    }
+
     _createCanvas(width, height) {
       this._canvas = document.createElement("canvas");
       this._canvas.width = width;
@@ -73,20 +86,12 @@
       this._context.strokeStyle = "#1113";
 
       for (let mathY = this._outputDomainStart; mathY <= this._outputDomainEnd; ++mathY) {
-        const screenY = mapRange(-mathY,
-                                 this._outputDomainStart, this._outputDomainEnd,
-                                 0, this._canvas.height - 1);
-        const nextScreenY = mapRange(-(mathY + 1),
-                                     this._outputDomainStart, this._outputDomainEnd,
-                                     0, this._canvas.height - 1);
+        const screenY = this.yMathToScreen(mathY);
+        const nextScreenY = this.yMathToScreen(mathY + 1);
 
         for (let mathX = this._inputDomainStart; mathX <= this._inputDomainEnd; ++mathX) {
-          const screenX = mapRange(mathX,
-                                   this._inputDomainStart, this._inputDomainEnd,
-                                   0, this._canvas.width - 1);
-          const nextScreenX = mapRange(mathX + 1,
-                                       this._inputDomainStart, this._inputDomainEnd,
-                                       0, this._canvas.width - 1);
+          const screenX = this.xMathToScreen(mathX);
+          const nextScreenX = this.xMathToScreen(mathX + 1);
 
           /* left to right */
           this._context.moveTo(screenX, screenY);
@@ -108,56 +113,52 @@
       this._context.fillStyle = "#000";
 
       /* draw x numbers */
-      for (let mathX = this._inputDomainStart; mathX <= this._inputDomainEnd; ++mathX) {
+      for (let mathX = this._inputDomainStart; mathX < this._inputDomainEnd; ++mathX) {
         if (mathX === 0) continue;
-        const screenX = mapRange(mathX,
-                                 this._inputDomainStart, this._inputDomainEnd,
-                                 0, this._canvas.width - 1);
-        this._context.moveTo(screenX, this._canvas.height / 2 - TICK_SIZE);
-        this._context.lineTo(screenX, this._canvas.height / 2 + TICK_SIZE);
-        this._context.fillText(mathX, screenX + 2, this._canvas.height / 2 - 8 + 16);
+        const screenX = this.xMathToScreen(mathX);
+        this._context.moveTo(screenX, this.yMathToScreen(0) - TICK_SIZE);
+        this._context.lineTo(screenX, this.yMathToScreen(0) + TICK_SIZE);
+        this._context.fillText(mathX, screenX + 2, this.yMathToScreen(0) - 8 + 16);
       }
 
       /* draw y numbers */
-      for (let mathY = this._outputDomainStart; mathY <= this._outputDomainEnd; ++mathY) {
+      for (let mathY = this._outputDomainStart; mathY < this._outputDomainEnd; ++mathY) {
         if (mathY === 0) continue;
-        const screenY = mapRange(-mathY,
-                                 this._outputDomainStart, this._outputDomainEnd,
-                                 0, this._canvas.height - 1);
 
-        this._context.moveTo(this._canvas.width / 2 - TICK_SIZE, screenY);
-        this._context.lineTo(this._canvas.width / 2 + TICK_SIZE, screenY);
-        this._context.fillText(mathY, this._canvas.width / 2 + 4, screenY + 2);
+        const screenY = this.yMathToScreen(mathY);
+        this._context.moveTo(this.xMathToScreen(0) - TICK_SIZE, screenY);
+        this._context.lineTo(this.xMathToScreen(0) + TICK_SIZE, screenY);
+        this._context.fillText(mathY, this.xMathToScreen(0) + TICK_SIZE + 1, screenY + 2);
       }
       this._context.stroke();
 
       this._context.font = "bold 16px serif";
       this._context.fillStyle = "#000";
 
-      this._context.fillText("y", this._canvas.width / 2 - 16, 16);
-      this._context.fillText("x", this._canvas.width - 16, this._canvas.height / 2 - 5);
+      this._context.fillText("y", this.xMathToScreen(0) - 16, 16);
+      this._context.fillText("x", this._canvas.width - 16, this.yMathToScreen(0) - 5);
 
       this._context.stroke();
       this._context.beginPath();
 
       /* x axis */
-      this._context.moveTo(0, this._canvas.height / 2);
-      this._context.lineTo(this._canvas.width, this._canvas.height / 2);
+      this._context.moveTo(0, this.yMathToScreen(0));
+      this._context.lineTo(this._canvas.width, this.yMathToScreen(0));
 
       /* x arrow */
-      this._context.lineTo(this._canvas.width - ARROW_SIZE, this._canvas.height / 2 - ARROW_SIZE);
-      this._context.moveTo(this._canvas.width, this._canvas.height / 2);
-      this._context.lineTo(this._canvas.width - ARROW_SIZE, this._canvas.height / 2 + ARROW_SIZE);
+      this._context.lineTo(this._canvas.width - ARROW_SIZE, this.yMathToScreen(0) - ARROW_SIZE);
+      this._context.moveTo(this._canvas.width, this.yMathToScreen(0));
+      this._context.lineTo(this._canvas.width - ARROW_SIZE, this.yMathToScreen(0) + ARROW_SIZE);
 
       /* y axis */
-      this._context.moveTo(this._canvas.width / 2, 0);
-      this._context.lineTo(this._canvas.width / 2, this._canvas.height);
+      this._context.moveTo(this.xMathToScreen(0), 0);
+      this._context.lineTo(this.xMathToScreen(0), this._canvas.height);
 
       /* y arrow */
-      this._context.moveTo(this._canvas.width / 2, 0);
-      this._context.lineTo(this._canvas.width / 2 - ARROW_SIZE, ARROW_SIZE);
-      this._context.moveTo(this._canvas.width / 2, 0);
-      this._context.lineTo(this._canvas.width / 2 + ARROW_SIZE, ARROW_SIZE);
+      this._context.moveTo(this.xMathToScreen(0), 0);
+      this._context.lineTo(this.xMathToScreen(0) - ARROW_SIZE, ARROW_SIZE);
+      this._context.moveTo(this.xMathToScreen(0), 0);
+      this._context.lineTo(this.xMathToScreen(0) + ARROW_SIZE, ARROW_SIZE);
 
       this._context.stroke();
     }
@@ -169,15 +170,9 @@
       const actualConstants = this.constantNames.map(name => +this._inputs[name].value);
 
       for (let screenX = 0; screenX < this._canvas.width; screenX += STEP) {
-        const mathX = mapRange(screenX,
-                               0, this._canvas.width,
-                               this._inputDomainStart, this._inputDomainEnd);
-
+        const mathX = this.xScreenToMath(screenX);
         const mathY = this.formula(...actualConstants, mathX);
-
-        const screenY = mapRange(-mathY,
-                                 this._outputDomainStart, this._outputDomainEnd,
-                                 0, this._canvas.height);
+        const screenY = this.yMathToScreen(mathY);
 
         const i = (Math.floor(screenY) * this._canvas.width + Math.floor(screenX)) * 4;
         pixels[i + 0] = 0;

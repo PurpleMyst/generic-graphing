@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
                           (base, x) => Math.pow(base, x),
                           getExponentEquationString,
                           -5, 5,
-                          -5, 5,
+                          -2, 8,
                           300, 300);
   graph.draw();
 });
