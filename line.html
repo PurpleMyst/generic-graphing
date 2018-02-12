@@ -3,7 +3,21 @@
     <title>Line</title>
     <link rel="stylesheet" href="./css/graph.css"></link>
     <script type="text/javascript" src="./js/graph.js"></script>
-    <script type="text/javascript" src="./js/line.js"></script>
+    <script type="text/javascript">
+    const getLineEquationString = (slope, constant) => "y = " + GraphUtils.addNicely([
+      GraphUtils.numberTimesText(slope, "x"), constant.toString()
+    ]);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const graph = new Graph([["slope", 1], ["constant term", 0]],
+                              (slope, constant, x) => slope * x + constant,
+                              getLineEquationString,
+                              -5, 5,
+                              -5, 5,
+                              300, 300);
+      graph.draw();
+    });
+    </script>
 </head>
 <body>
 </body>
