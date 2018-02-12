@@ -25,7 +25,7 @@
       this._inputDomainEnd = inputDomainEnd;
       this._outputDomainStart = outputDomainStart;
       this._outputDomainEnd = outputDomainEnd;
-      this._options = options;
+      this._options = options || {};
 
       this._createCanvas(width, height);
       this._createInputContainer();
