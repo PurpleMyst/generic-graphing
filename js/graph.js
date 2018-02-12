@@ -15,7 +15,7 @@
     constructor(constants, formula, stringifyer,
                 inputDomainStart, inputDomainEnd,
                 outputDomainStart, outputDomainEnd,
-                width, height) {
+                width, height, options) {
 
       this.constants = constants;   // [name, defaultValue] pairs
       this.constantNames = constants.map(nameValuePair => nameValuePair[0]);
@@ -25,6 +25,7 @@
       this._inputDomainEnd = inputDomainEnd;
       this._outputDomainStart = outputDomainStart;
       this._outputDomainEnd = outputDomainEnd;
+      this._options = options;
 
       this._createCanvas(width, height);
       this._createInputContainer();
@@ -189,14 +190,24 @@
     }
 
     _drawFormula() {
+      /* a lot of these values are *really* arbitrary.
+       * we should make more of them constants. */
       if(!this.stringifyer) return;
       this._context.font = "bold 14px serif";
       this._context.fillStyle = "#00F";
 
       // the canvas widget doesn't like newlines
       const formulaLines = this._stringifyFormula().split("\n");
-      for (var i = 0; i < formulaLines.length; i++) {
-        this._context.fillText(formulaLines[i], 5, 18*(i + 1));
+      if (this._options["formulaPosition"] === "top right") {
+        for (var i = 0; i < formulaLines.length; i++) {
+          const lineLength = formulaLines[i].length * 6;
+          this._context.fillText(formulaLines[i], this._canvas.width - lineLength - 5, 18*(i + 1));
+        }
+      } else {
+        /* top left is the default */
+        for (var i = 0; i < formulaLines.length; i++) {
+          this._context.fillText(formulaLines[i], 5, 18*(i + 1));
+        }
       }
     }
 
