@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
                           getExponentEquationString,
                           -5, 5,
                           -2, 8,
-                          300, 300
-                          { formulaPosition: "top right" });
+                          300, 300);
   graph.draw();
 });
