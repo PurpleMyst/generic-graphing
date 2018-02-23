@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Sine Wave</title>
+    <link rel="stylesheet" href="./css/graph.css"></link>
+    <script type="text/javascript" src="./js/graph.js"></script>
+    <script type="text/javascript">
+    const getEquationString = (A,f) => ("y = " +
+      GraphUtils.parenthesize(A.toString()) + "sin(τ" +
+      GraphUtils.numberTimesText(f, "x") +")");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const graph = new Graph([["amplitude", 1], ["frequency", 1]],
+                              (A,f,x) => A*Math.sin(2*Math.PI*f*x),
+                              getEquationString,
+                              -8, 8,
+                              -4, 4,
+                              600, 300);
+      graph.draw();
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>
