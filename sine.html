@@ -4,9 +4,9 @@
     <link rel="stylesheet" href="./css/graph.css"></link>
     <script type="text/javascript" src="./js/graph.js"></script>
     <script type="text/javascript">
-    const getEquationString = (A,f) => ("y = " +
-      GraphUtils.parenthesize(A.toString()) + "sin(τ" +
-      GraphUtils.numberTimesText(f, "x") +")");
+    const getEquationString = (A,f) => "y = " + GraphUtils.numberTimesText(
+      A, "sin(" + GraphUtils.TAU + GraphUtils.CENTERDOT +
+         GraphUtils.parenthesize(f.toString()) + "x)");
 
     document.addEventListener("DOMContentLoaded", () => {
       const graph = new Graph([["amplitude", 1], ["frequency", 1]],

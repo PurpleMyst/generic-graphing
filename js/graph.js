@@ -250,6 +250,10 @@
   };
 
   window.GraphUtils = {
+    TAU: "\u03c4",
+    PI: "\u03c0",    // because now nobody complains about this
+    CENTERDOT: "\u00b7",
+
     superscript(string) {
       return Array.from(string).map(char_ => SUPERSCRIPTS[char_] || char_).join("");
     },
