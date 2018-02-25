@@ -4,13 +4,12 @@
     <link rel="stylesheet" href="./css/graph.css"></link>
     <script type="text/javascript" src="./js/graph.js"></script>
     <script type="text/javascript">
-    const getEquationString = (A,f) => ("y = " +
-      GraphUtils.parenthesize(A.toString()) + "sin(τ" +
-      GraphUtils.numberTimesText(f, "x") +")");
+    const getEquationString = (A,T) => ("y = " + GraphUtils.numberTimesText(
+      A, "sin(τx / " + GraphUtils.parenthesize(T.toString()) + ")"));
 
     document.addEventListener("DOMContentLoaded", () => {
-      const graph = new Graph([["amplitude", 1], ["frequency", 1]],
-                              (A,f,x) => A*Math.sin(2*Math.PI*f*x),
+      const graph = new Graph([["amplitude", 1], ["period", 1]],
+                              (A,T,x) => A*Math.sin(2*Math.PI*x/T),
                               getEquationString,
                               -8, 8,
                               -4, 4,
